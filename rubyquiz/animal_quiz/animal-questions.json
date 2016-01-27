@@ -1,0 +1,10 @@
+{"is it big":
+ {"yes":
+  "elephant", "no":
+   {"does it fly":
+     {"yes": "Bird",
+      "no": "mouse"}
+
+    }
+  }
+}
