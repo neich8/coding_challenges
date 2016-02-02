@@ -6,14 +6,14 @@ class AnimalQuiz
   attr_accessor :query
   def initialize
     file = File.read("animal-questions.json")
-    @answers = JSON.parse(file)
-    @query = @answers
+    @questions = JSON.parse(file)
+    @query = @questions
     @step_directions = []
   end
 
   def start
-    puts @answers.keys.first
-    query @answers.keys.first
+    puts @questions.keys.first
+    query @questions.keys.first
     parse_answer
   end
 
@@ -46,9 +46,22 @@ class AnimalQuiz
   end
 
   def add_to_json(new_animal, new_question)
-    
+    i = 0
+    question = false
+    while i < @step_directions.length
+      st = @step_directions[i]
+      if question
+        question = question[st]
+      else 
+        question = @questions[st]
+      end
+      if i == (@step_directions.length - 2)
+        question = {"#{new_question}" => {"yes" =>new_animal, "no" => "elephant"} }
+      end
+      i += 1
+    end
     debugger
-    p "ha"
+    puts ""
   end
 
   def query to_add
