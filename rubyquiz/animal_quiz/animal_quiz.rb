@@ -16,8 +16,8 @@ class Quiz
   end
 
   def start
-    puts @answers.keys.first
-    query @answers.keys.first
+    puts @questions.keys.first
+    query @questions.keys.first
     parse_answer
   end
 
@@ -44,6 +44,25 @@ class Quiz
       new_animal = get_question_for(gets.chomp)
       new_question = gets.chomp
     end
+  end
+
+  def add_to_json(new_animal, new_question)
+    i = 0
+    question = false
+    while i < @step_directions.length
+      st = @step_directions[i]
+      if question
+        question = question[st]
+      else 
+        question = @questions[st]
+      end
+      if i == (@step_directions.length - 2)
+        question = {"#{new_question}" => {"yes" =>new_animal, "no" => "elephant"} }
+      end
+      i += 1
+    end
+    debugger
+    puts ""
   end
 
   def query to_add
