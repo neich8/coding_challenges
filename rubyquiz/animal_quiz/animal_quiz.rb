@@ -1,3 +1,5 @@
+# Todo build new json as user goes through tree.
+
 require 'byebug'
 require 'json'
 
@@ -50,18 +52,22 @@ class AnimalQuiz
     question = false
     while i < @step_directions.length
       st = @step_directions[i]
-      if question
-        question = question[st]
-      else 
-        question = @questions[st]
-      end
-      if i == (@step_directions.length - 2)
-        question = {"#{new_question}" => {"yes" =>new_animal, "no" => "elephant"} }
+      if i == (@step_directions.length - 1)
+        new_stuff = {"#{new_question}" => {"yes" =>new_animal, "no" => "elephant"} }
+        set_question(st, new_stuff)
       end
       i += 1
     end
     debugger
     puts ""
+  end
+
+  def set_question(st, new_stuff)
+      if question
+        question[st] = new_stuff
+      else 
+        @questions[st] = new_stuff
+      end
   end
 
   def query to_add
@@ -70,6 +76,7 @@ class AnimalQuiz
   end
 
 end
+
 
 
 
