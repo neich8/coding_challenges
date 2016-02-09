@@ -1,58 +1,46 @@
-# Todo build new json as user goes through tree.
-
 require 'json'
 
 class Quiz
 
-
-  attr_accessor :query
   def initialize
-    file = File.read("animal-questions.json")
-    @answers = JSON.parse(file)
-    @query = @answers
+    @answers = read_json
     @directions = []
-
+    @query = @answers
   end
 
   def start
-    puts @answers.keys.first
-    query(@answers.keys.first)
-    parse_answer
-  end
-
-  def parse_answer
     while @query.is_a? Hash
+      query(ask_question)
       answer = gets.chomp
       query(answer)
       if @query.is_a? String
-        right_answer
-      else
-        puts @query.keys.first
-        @directions << @query.keys.first
-        query @query.keys.first
+        check_answer
       end
     end
   end
 
-  def right_answer
+  def check_answer
     puts "is it a #{@query}?"
-    answer = gets.chomp
-    if answer == "yes"
+    if gets.chomp == "yes"
       puts "Woot Woot!"
     else
       puts "What animal was it?"
       new_animal = gets.chomp
       puts "What is a question that can diferentiate a #{new_animal} from a #{@query}?"
       new_question = gets.chomp
-      add(new_animal, new_question, @query)
+      add(new_animal, new_question)
     end
   end
 
-  def add(new_animal, new_question, wrong_animal)
-    a = {new_question => {"yes" => new_animal, "no"=> wrong_animal} }
-    eval("@answers['#{@directions.join("']['")}']=#{a}")
+  def add(new_animal, new_question)
+    new_map = {new_question => {"yes" => new_animal, "no"=> @query} }
+    eval("@answers['#{@directions.join("']['")}']=#{new_map}")
     
     write_json
+  end
+
+  def ask_question
+    p @query.keys.first
   end
 
   def write_json
@@ -61,15 +49,17 @@ class Quiz
     end
   end
 
-  def query answer
+  def read_json
+    file = File.read("animal-questions.json")
+    JSON.parse(file)
+  end
+
+  def query(answer=nil)
     @query = @query[answer]
     @directions << answer
   end
 
 end
-
-
-
 
 
 quiz = Quiz.new
