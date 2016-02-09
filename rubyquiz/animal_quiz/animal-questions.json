@@ -1,10 +1,1 @@
-{"is it big?":
- {"yes":
-  "elephant", "no":
-   {"does it fly?":
-     {"yes": "Bird",
-      "no": "mouse"}
-
-    }
-  }
-}
+{"is_it_big":{"yes":{"does_it_have_fur":{"yes":"bear","no":"elephant"}},"no":{"does_it_fly":{"yes":"Bird","no":"mouse"}}}}

@@ -1,80 +1,69 @@
 # Todo build new json as user goes through tree.
 
-require 'byebug'
-
 require 'json'
-require 'ostruct'
-require 'debugger'
-require "./phrases.rb"
-
 
 class Quiz
-  include Phrases
+
 
   attr_accessor :query
   def initialize
     file = File.read("animal-questions.json")
     @answers = JSON.parse(file)
     @query = @answers
-    start
+    @directions = []
+
   end
 
   def start
-    puts @questions.keys.first
-    query @questions.keys.first
+    puts @answers.keys.first
+    query(@answers.keys.first)
     parse_answer
   end
 
   def parse_answer
     while @query.is_a? Hash
-      to_add = gets.chomp
-      query to_add
+      answer = gets.chomp
+      query(answer)
       if @query.is_a? String
         right_answer
       else
-        next_question
+        puts @query.keys.first
+        @directions << @query.keys.first
         query @query.keys.first
       end
     end
   end
 
   def right_answer
-    guess
+    puts "is it a #{@query}?"
     answer = gets.chomp
     if answer == "yes"
-      celebrate
+      puts "Woot Woot!"
     else
-      give_up
-      new_animal = get_question_for(gets.chomp)
+      puts "What animal was it?"
+      new_animal = gets.chomp
+      puts "What is a question that can diferentiate a #{new_animal} from a #{@query}?"
       new_question = gets.chomp
+      add(new_animal, new_question, @query)
     end
   end
 
-  def add_to_json(new_animal, new_question)
-    i = 0
-    question = false
-    while i < @step_directions.length
-      st = @step_directions[i]
-      if i == (@step_directions.length - 1)
-        new_stuff = {"#{new_question}" => {"yes" =>new_animal, "no" => "elephant"} }
-        set_question(st, new_stuff)
-      end
-      i += 1
+  def add(new_animal, new_question, wrong_animal)
+    a = {new_question => {"yes" => new_animal, "no"=> wrong_animal} }
+    eval("@answers['#{@directions.join("']['")}']=#{a}")
+    
+    write_json
+  end
+
+  def write_json
+    File.open("animal-questions.json", 'w') do |f|
+      f.write(@answers.to_json)
     end
-    debugger
-    puts ""
   end
 
-  def set_question(st, new_stuff)
-      if question
-        question[st] = new_stuff
-      else 
-        @questions[st] = new_stuff
-      end
-  end
-
-  def query to_add
-    @query = @query[to_add]
+  def query answer
+    @query = @query[answer]
+    @directions << answer
   end
 
 end
@@ -83,4 +72,5 @@ end
 
 
 
-animal_quiz = Quiz.new
+quiz = Quiz.new
+quiz.start
